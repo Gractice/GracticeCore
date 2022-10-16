@@ -28,7 +28,7 @@ type Arena interface {
 	Open() error
 	Close() error
 	Descriptor() Descriptor
-	State() *State
+	State() State
 	Players() []Member
 	Add(Member) error
 	Remove(Member) error
