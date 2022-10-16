@@ -1,6 +1,6 @@
 package arena
 
-import "github.com/blackjack200/gracticecore/util"
+import "github.com/gractice/gracticecore/util"
 
 const (
 	startBitOffset = iota

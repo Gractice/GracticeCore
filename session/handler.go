@@ -2,14 +2,14 @@ package session
 
 import (
 	"github.com/Blackjack200/GracticeEssential/mhandler"
-	"github.com/blackjack200/gracticecore/arena"
-	"github.com/blackjack200/gracticecore/util"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/entity/damage"
 	"github.com/df-mc/dragonfly/server/entity/healing"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/google/uuid"
+	"github.com/gractice/gracticecore/arena"
+	"github.com/gractice/gracticecore/util"
 	"time"
 )
 
