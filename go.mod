@@ -1,4 +1,4 @@
-module github.com/blackjack200/gracticecore
+module github.com/gractice/gracticecore
 
 go 1.19
 
