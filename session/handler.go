@@ -133,6 +133,9 @@ func (p *Player) SendMessage(msg string, args ...any) {
 }
 
 func (p *Player) SetScoreboard(sb Scoreboard) {
+	if sb == nil {
+		p.RealPlayer().RemoveScoreboard()
+	}
 	p.scoreboard.Swap(sb)
 	sb.Send(p)
 }
