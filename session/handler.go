@@ -149,6 +149,13 @@ func (p *Player) Arena() arena.Arena {
 	return p.arena.Load()
 }
 
+func (p *Player) LeaveArena() {
+	oldArena := p.arena.Swap(nil)
+	if oldArena != nil {
+		_ = oldArena.Remove(p)
+	}
+}
+
 func (p *Player) OnJoin(a arena.Arena) {
 	p.arena.Store(a)
 }
@@ -159,10 +166,7 @@ func (p *Player) OnQuit(arena.Arena) {
 
 func (p *Player) close() {
 	p.closed.Store(true)
-	oldArena := p.arena.Swap(nil)
-	if oldArena != nil {
-		_ = oldArena.Remove(p)
-	}
+	p.LeaveArena()
 	p.scoreboard.Store(nil)
 	p.handler.Clear()
 	p.ticker.Stop()
