@@ -159,6 +159,11 @@ func (p *Player) LeaveArena() {
 	}
 }
 
+func (p *Player) JoinArena(a arena.Arena) error {
+	p.LeaveArena()
+	return a.Add(p)
+}
+
 func (p *Player) OnJoin(a arena.Arena) {
 	p.arena.Store(a)
 }
