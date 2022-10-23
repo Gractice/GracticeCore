@@ -25,6 +25,7 @@ type Player struct {
 
 	scoreboard     *atomic.Value[Scoreboard]
 	currentHandler *atomic.Value[any]
+	combat         *atomic.Value[*CombatInfo]
 	arena          *atomic.Value[arena.Arena]
 }
 
@@ -35,10 +36,12 @@ func NewSession(player *player.Player) *Player {
 		handler:        mhandler.New(),
 		ticker:         time.NewTicker(time.Second / 20),
 		scoreboard:     atomic.NewValue[Scoreboard](nil),
+		combat:         atomic.NewValue[*CombatInfo](nil),
 		currentHandler: atomic.NewValue[any](nil),
 		arena:          atomic.NewValue[arena.Arena](nil),
 	}
 	player.Handle(p.handler)
+	p.handler.Register(combatHandler{p})
 	// OnQuit
 	p.handler.Register(p)
 	go p.tick()
@@ -170,6 +173,14 @@ func (p *Player) OnJoin(a arena.Arena) {
 
 func (p *Player) OnQuit(arena.Arena) {
 	p.arena.Store(nil)
+}
+
+func (p *Player) CombatInfo() *CombatInfo {
+	return p.combat.Load()
+}
+
+func (p *Player) SetCombatInfo(i *CombatInfo) {
+	p.combat.Store(i)
 }
 
 func (p *Player) close() {
