@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gractice/gracticecore/arena"
 	"github.com/gractice/gracticecore/util"
+	"github.com/sandertv/gophertunnel/minecraft/text"
+	"sync"
 	"time"
 )
 
@@ -41,7 +43,14 @@ func NewSession(player *player.Player) *Player {
 		arena:          atomic.NewValue[arena.Arena](nil),
 	}
 	player.Handle(p.handler)
-	p.handler.Register(combatHandler{p})
+	p.handler.Register(&combatHandler{p})
+	p.handler.Register(&clickHandler{
+		p:            p,
+		mu:           &sync.Mutex{},
+		clickCounter: 0,
+		lastClick:    time.Now(),
+		onClick:      func() { p.RealPlayer().SendPopup(text.Colourf("CPS=%v")) },
+	})
 	// OnQuit
 	p.handler.Register(p)
 	go p.tick()
