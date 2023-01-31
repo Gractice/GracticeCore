@@ -3,21 +3,16 @@ package session
 import (
 	"github.com/Blackjack200/GracticeEssential/mhandler"
 	"github.com/df-mc/atomic"
-	"github.com/df-mc/dragonfly/server/entity/damage"
-	"github.com/df-mc/dragonfly/server/entity/healing"
+	"github.com/df-mc/dragonfly/server/entity"
+	"github.com/df-mc/dragonfly/server/entity/effect"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/google/uuid"
 	"github.com/gractice/gracticecore/arena"
-	"github.com/gractice/gracticecore/util"
 	"github.com/sandertv/gophertunnel/minecraft/text"
 	"sync"
 	"time"
 )
-
-type LifecycleHandler interface {
-	Close()
-}
 
 type Player struct {
 	closed  *atomic.Bool
@@ -25,22 +20,22 @@ type Player struct {
 	handler *mhandler.MultipleHandler
 	ticker  *time.Ticker
 
-	scoreboard     *atomic.Value[Scoreboard]
-	currentHandler *atomic.Value[any]
-	combat         *atomic.Value[*CombatInfo]
-	arena          *atomic.Value[arena.Arena]
+	scoreboard         *atomic.Value[Scoreboard]
+	currentHandlerFunc *atomic.Value[func()]
+	combat             *atomic.Value[*CombatInfo]
+	arena              *atomic.Value[arena.Arena]
 }
 
 func NewSession(player *player.Player) *Player {
 	p := &Player{
-		closed:         atomic.NewBool(false),
-		player:         player,
-		handler:        mhandler.New(),
-		ticker:         time.NewTicker(time.Second / 20),
-		scoreboard:     atomic.NewValue[Scoreboard](nil),
-		combat:         atomic.NewValue[*CombatInfo](nil),
-		currentHandler: atomic.NewValue[any](nil),
-		arena:          atomic.NewValue[arena.Arena](nil),
+		closed:             atomic.NewBool(false),
+		player:             player,
+		handler:            mhandler.New(),
+		ticker:             time.NewTicker(time.Second / 20),
+		scoreboard:         atomic.NewValue[Scoreboard](nil),
+		combat:             atomic.NewValue[*CombatInfo](nil),
+		currentHandlerFunc: atomic.NewValue[func()](nil),
+		arena:              atomic.NewValue[arena.Arena](nil),
 	}
 	player.Handle(p.handler)
 	p.handler.Register(&combatHandler{p})
@@ -88,7 +83,7 @@ func (p *Player) Reset(teleport bool) {
 	if teleport {
 		pp.Teleport(pp.World().PlayerSpawn(pp.UUID()).Vec3Middle())
 	}
-	pp.Heal(pp.MaxHealth()-pp.Health(), healing.SourceInstantHealthEffect{})
+	pp.Heal(pp.MaxHealth()-pp.Health(), effect.InstantHealingSource{})
 	//hardcoded
 	pp.SetFood(20)
 	p.Clear()
@@ -110,33 +105,25 @@ func (p *Player) Clear() {
 }
 
 func (p *Player) CurrentHandler() any {
-	return p.currentHandler.Load()
+	return p.currentHandlerFunc.Load()
 }
 
 func (p *Player) Handle(h any) (unregisterFunc func()) {
-	old := p.currentHandler.Swap(h)
-	p.handler.Unregister(old)
-	util.Cast[LifecycleHandler](old).Is(func(h LifecycleHandler) {
-		h.Close()
-	})
-
-	p.handler.Register(h)
+	hh := p.handler.Register(h)
+	old := p.currentHandlerFunc.Swap(hh)
+	if old != nil {
+		old()
+	}
 	return func() {
-		p.handler.Unregister(h)
-		p.currentHandler.Store(nil)
-		util.Cast[LifecycleHandler](h).Is(func(h LifecycleHandler) {
-			h.Close()
-		})
+		hh()
+		p.currentHandlerFunc.Store(nil)
 	}
 }
 
 func (p *Player) HandleGlobal(h any) (unregisterFunc func()) {
-	p.handler.Register(h)
+	hh := p.handler.Register(h)
 	return func() {
-		p.handler.Unregister(h)
-		util.Cast[LifecycleHandler](h).Is(func(h LifecycleHandler) {
-			h.Close()
-		})
+		hh()
 	}
 }
 
@@ -157,7 +144,7 @@ func (p *Player) Scoreboard() Scoreboard {
 }
 
 func (p *Player) Kill() {
-	p.player.Hurt(p.player.MaxHealth(), damage.SourceVoid{})
+	p.player.Hurt(p.player.MaxHealth(), entity.VoidDamageSource{})
 }
 
 func (p *Player) Arena() arena.Arena {
