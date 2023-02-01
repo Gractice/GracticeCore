@@ -18,6 +18,7 @@ type Player struct {
 	player  *player.Player
 	handler *mhandler.MultipleHandler
 	ticker  *time.Ticker
+	click   *clickHandler
 
 	scoreboard         *atomic.Value[Scoreboard]
 	currentHandlerFunc *atomic.Value[func()]
@@ -25,26 +26,28 @@ type Player struct {
 	arena              *atomic.Value[arena.Arena]
 }
 
-func NewSession(player *player.Player, onClick func()) *Player {
+func NewSession(player *player.Player) *Player {
 	p := &Player{
-		closed:             atomic.NewBool(false),
-		player:             player,
-		handler:            mhandler.New(),
-		ticker:             time.NewTicker(time.Second / 20),
+		closed:  atomic.NewBool(false),
+		player:  player,
+		handler: mhandler.New(),
+		ticker:  time.NewTicker(time.Second / 20),
+		click: &clickHandler{
+			mu:           &sync.Mutex{},
+			clickCounter: 0,
+			lastClick:    time.Now(),
+			OnClick:      nil,
+		},
+
 		scoreboard:         atomic.NewValue[Scoreboard](nil),
 		combat:             atomic.NewValue[*CombatInfo](nil),
 		currentHandlerFunc: atomic.NewValue[func()](nil),
 		arena:              atomic.NewValue[arena.Arena](nil),
 	}
+
 	player.Handle(p.handler)
 	p.handler.Register(&combatHandler{p})
-	p.handler.Register(&clickHandler{
-		p:            p,
-		mu:           &sync.Mutex{},
-		clickCounter: 0,
-		lastClick:    time.Now(),
-		onClick:      onClick,
-	})
+	p.handler.Register(p.click)
 	// OnQuit
 	p.handler.Register(p)
 	go p.tick()
@@ -176,6 +179,14 @@ func (p *Player) CombatInfo() *CombatInfo {
 
 func (p *Player) SetCombatInfo(i *CombatInfo) {
 	p.combat.Store(i)
+}
+
+func (p *Player) OnClick(f func()) {
+	p.click.OnClick = f
+}
+
+func (p *Player) CPS() uint32 {
+	return p.click.CPS()
 }
 
 func (p *Player) close() {

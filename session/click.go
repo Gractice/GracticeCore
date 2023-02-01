@@ -8,11 +8,10 @@ import (
 )
 
 type clickHandler struct {
-	p            *Player
 	mu           *sync.Mutex
 	clickCounter uint32
 	lastClick    time.Time
-	onClick      func()
+	OnClick      func()
 }
 
 func (h *clickHandler) HandlePunchAir(*event.Context) {
@@ -31,7 +30,9 @@ func (h *clickHandler) click() {
 	}
 	h.clickCounter++
 	h.lastClick = time.Now()
-	h.onClick()
+	if h.OnClick != nil {
+		h.OnClick()
+	}
 }
 
 func (h *clickHandler) CPS() uint32 {
