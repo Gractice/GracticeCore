@@ -24,12 +24,12 @@ func (h *clickHandler) HandleAttackEntity(*event.Context, world.Entity, *float64
 
 func (h *clickHandler) click() {
 	mu.Lock()
-	defer mu.Unlock()
 	if time.Since(h.lastClick) > time.Second {
 		h.clickCounter = 0
 	}
 	h.clickCounter++
 	h.lastClick = time.Now()
+	mu.Unlock()
 	if h.OnClick != nil {
 		h.OnClick()
 	}
