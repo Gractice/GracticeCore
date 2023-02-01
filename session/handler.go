@@ -9,7 +9,6 @@ import (
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/google/uuid"
 	"github.com/gractice/gracticecore/arena"
-	"github.com/sandertv/gophertunnel/minecraft/text"
 	"sync"
 	"time"
 )
@@ -26,7 +25,7 @@ type Player struct {
 	arena              *atomic.Value[arena.Arena]
 }
 
-func NewSession(player *player.Player) *Player {
+func NewSession(player *player.Player, onClick func()) *Player {
 	p := &Player{
 		closed:             atomic.NewBool(false),
 		player:             player,
@@ -44,7 +43,7 @@ func NewSession(player *player.Player) *Player {
 		mu:           &sync.Mutex{},
 		clickCounter: 0,
 		lastClick:    time.Now(),
-		onClick:      func() { p.RealPlayer().SendPopup(text.Colourf("CPS=%v")) },
+		onClick:      onClick,
 	})
 	// OnQuit
 	p.handler.Register(p)
