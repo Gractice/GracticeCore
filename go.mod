@@ -3,11 +3,11 @@ module github.com/gractice/gracticecore
 go 1.19
 
 require (
-	github.com/Blackjack200/GracticeEssential v0.0.0-20230131130019-7a0e6f0ce72e
+	github.com/Blackjack200/GracticeEssential v0.0.0-20230201031318-911c31ed73d6
 	github.com/df-mc/atomic v1.10.0
 	github.com/df-mc/dragonfly v0.9.2-0.20230127011617-89192ef505d7
 	github.com/google/uuid v1.3.0
-	golang.org/x/exp v0.0.0-20230131120322-dfa7d7a641b0
+	golang.org/x/exp v0.0.0-20230131160201-f062dba9d201
 )
 
 require (
