@@ -8,6 +8,8 @@ github.com/Blackjack200/GracticeEssential v0.0.0-20230131130019-7a0e6f0ce72e h1:
 github.com/Blackjack200/GracticeEssential v0.0.0-20230131130019-7a0e6f0ce72e/go.mod h1:J5SLJdA32oZEPPOSs2GNGlJIpx4eBWA6WZved7ZMLF8=
 github.com/Blackjack200/GracticeEssential v0.0.0-20230201031318-911c31ed73d6 h1:k7L2t1HGIxe7SK8zPwTCRCZeOCiBPQFAdVOMmmJ85qY=
 github.com/Blackjack200/GracticeEssential v0.0.0-20230201031318-911c31ed73d6/go.mod h1:J5SLJdA32oZEPPOSs2GNGlJIpx4eBWA6WZved7ZMLF8=
+github.com/Blackjack200/GracticeEssential v0.0.0-20230201051303-796482fcad30 h1:2CG7RtzNbp4/YdW3UHqC54EP+xRQmEbCiBdOh1lUlYo=
+github.com/Blackjack200/GracticeEssential v0.0.0-20230201051303-796482fcad30/go.mod h1:J5SLJdA32oZEPPOSs2GNGlJIpx4eBWA6WZved7ZMLF8=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 h1:/G0ghZwrhou0Wq21qc1vXXMm/t/aKWkALWwITptKbE0=

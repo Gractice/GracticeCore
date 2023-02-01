@@ -3,7 +3,7 @@ module github.com/gractice/gracticecore
 go 1.19
 
 require (
-	github.com/Blackjack200/GracticeEssential v0.0.0-20230201031318-911c31ed73d6
+	github.com/Blackjack200/GracticeEssential v0.0.0-20230201051303-796482fcad30
 	github.com/df-mc/atomic v1.10.0
 	github.com/df-mc/dragonfly v0.9.2-0.20230127011617-89192ef505d7
 	github.com/google/uuid v1.3.0
