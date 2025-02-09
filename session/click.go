@@ -2,6 +2,7 @@ package session
 
 import (
 	"github.com/df-mc/dragonfly/server/event"
+	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"sync"
 	"time"
@@ -14,11 +15,11 @@ type clickHandler struct {
 	OnClick      func()
 }
 
-func (h *clickHandler) HandlePunchAir(*event.Context) {
+func (h *clickHandler) HandlePunchAir(ctx *event.Context[*player.Player]) {
 	h.click()
 }
 
-func (h *clickHandler) HandleAttackEntity(*event.Context, world.Entity, *float64, *float64, *bool) {
+func (h *clickHandler) HandleAttackEntity(*event.Context[*player.Player], world.Entity, *float64, *bool) {
 	h.click()
 }
 

@@ -2,6 +2,7 @@ package session
 
 import (
 	"github.com/df-mc/dragonfly/server/event"
+	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 )
 
@@ -16,7 +17,7 @@ type combatHandler struct {
 	p *Player
 }
 
-func (h *combatHandler) HandleAttackEntity(_ *event.Context, _ world.Entity, force, height *float64, _ *bool) {
+func (h *combatHandler) HandleAttackEntity(_ *event.Context[*player.Player], _ world.Entity, force, height *float64, _ *bool) {
 	if info := h.p.CombatInfo(); info != nil {
 		*force, *height = info.Force, info.Height
 	}

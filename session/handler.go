@@ -74,7 +74,9 @@ func (p *Player) RealPlayer() *player.Player {
 }
 
 func (p *Player) SwitchWorld(w *world.World) {
-	w.AddEntity(p.RealPlayer())
+	p.RealPlayer().H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+		tx.AddEntity(p.RealPlayer().H())
+	})
 	p.Reset(true)
 	p.RealPlayer().Teleport(w.Spawn().Vec3Middle())
 }
@@ -83,7 +85,9 @@ func (p *Player) Reset(teleport bool) {
 	pp := p.player
 
 	if teleport {
-		pp.Teleport(pp.World().PlayerSpawn(pp.UUID()).Vec3Middle())
+		pp.H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+			pp.Teleport(tx.World().PlayerSpawn(pp.UUID()).Vec3Middle())
+		})
 	}
 	pp.Heal(pp.MaxHealth()-pp.Health(), effect.InstantHealingSource{})
 	//hardcoded
