@@ -203,6 +203,8 @@ func (p *Player) close() {
 	unregister(p)
 }
 
-func (p *Player) HandleQuit() {
+var _ mhandler.QuitHandler = (*Player)(nil)
+
+func (p *Player) HandleQuit(*player.Player) {
 	p.close()
 }
