@@ -1,6 +1,7 @@
 package session
 
 import (
+	"github.com/Blackjack200/GracticeEssential/mhandler"
 	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -15,11 +16,15 @@ type clickHandler struct {
 	OnClick      func()
 }
 
+var _ mhandler.PunchAirHandler = (*clickHandler)(nil)
+
 func (h *clickHandler) HandlePunchAir(ctx *event.Context[*player.Player]) {
 	h.click()
 }
 
-func (h *clickHandler) HandleAttackEntity(*event.Context[*player.Player], world.Entity, *float64, *bool) {
+var _ mhandler.AttackEntityHandler = (*clickHandler)(nil)
+
+func (h *clickHandler) HandleAttackEntity(_ *event.Context[*player.Player], _ world.Entity, _, _ *float64, _ *bool) {
 	h.click()
 }
 

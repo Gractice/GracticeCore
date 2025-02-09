@@ -1,6 +1,7 @@
 package session
 
 import (
+	"github.com/Blackjack200/GracticeEssential/mhandler"
 	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -16,6 +17,8 @@ type CombatInfo struct {
 type combatHandler struct {
 	p *Player
 }
+
+var _ mhandler.AttackEntityHandler = (*combatHandler)(nil)
 
 func (h *combatHandler) HandleAttackEntity(_ *event.Context[*player.Player], _ world.Entity, force, height *float64, _ *bool) {
 	if info := h.p.CombatInfo(); info != nil {
